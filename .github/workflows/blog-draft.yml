@@ -1,0 +1,38 @@
+name: Draft blog post
+
+# Weekly draft for review. The PR it opens IS the approval gate — merge to
+# publish, close to discard. Also runnable on demand from the Actions tab.
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 13:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Generate draft
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run blog:draft
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: blog/draft-${{ github.run_id }}
+          commit-message: "Draft blog post"
+          title: "Blog draft for review"
+          body: |
+            Automated blog draft. Review the Vercel preview, then **merge to publish** or **close to discard**.
+
+            Edit `content/posts/*.json` on this branch to tweak copy, photos, or layout before merging.
+          add-paths: content/posts/
