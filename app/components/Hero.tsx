@@ -63,6 +63,7 @@ export function Hero({ slides }: { slides: Project[] }) {
                 className="object-cover"
                 style={{ filter: "sepia(0.28) saturate(1.05) brightness(0.92)" }}
                 onLoad={i === 0 ? signalHeroLoaded : undefined}
+                onError={i === 0 ? signalHeroLoaded : undefined}
               />
             </motion.div>
           </motion.div>

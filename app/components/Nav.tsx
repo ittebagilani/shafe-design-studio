@@ -28,7 +28,14 @@ export function Nav() {
     if (window.__heroLoaded) return setHeroLoaded(true);
     const onLoaded = () => setHeroLoaded(true);
     window.addEventListener("hero-loaded", onLoaded);
-    return () => window.removeEventListener("hero-loaded", onLoaded);
+    // ponytail: the hero's onLoad can silently never fire — next/image drops it if
+    // img.decode() resolves after unmount, and a failed image never loads at all.
+    // Without this the navbar stays at opacity 0 forever. Reveal regardless.
+    const t = setTimeout(onLoaded, 2500);
+    return () => {
+      window.removeEventListener("hero-loaded", onLoaded);
+      clearTimeout(t);
+    };
   }, [isHome]);
 
   // Flip to light text whenever a [data-nav-dark] region sits behind the navbar.
