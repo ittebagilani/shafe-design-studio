@@ -31,12 +31,9 @@ export function Hero({ slides }: { slides: Project[] }) {
 
   return (
     <section id="top" className="bg-cream px-3 pb-3 pt-[68px] md:px-4 md:pt-[76px]">
-      <motion.div
+      <div
         data-nav-dark
-        initial={{ clipPath: "inset(50% 50% 50% 50% round 32px)" }}
-        animate={{ clipPath: "inset(0% 0% 0% 0% round 32px)" }}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="relative h-[calc(100vh-84px)] min-h-[560px] overflow-hidden rounded-3xl bg-espresso md:rounded-4xl"
+        className="hero-open relative h-[calc(100vh-84px)] min-h-[560px] overflow-hidden rounded-3xl bg-espresso md:rounded-4xl"
       >
         {/* Crossfading carousel */}
         <AnimatePresence>
@@ -115,7 +112,7 @@ export function Hero({ slides }: { slides: Project[] }) {
             />
           ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

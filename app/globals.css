@@ -118,16 +118,34 @@ h6,
   view-timeline-name: --wordfill;
 }
 
+/* ponytail: no prefers-reduced-motion gate — this is a pure opacity fade with no
+   movement, which isn't the vestibular-trigger case that query exists for. Gating
+   it meant anyone with Reduce Motion on just saw static full-opacity text. */
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .wordfill {
-      opacity: 0.12;
-      animation: word-fill linear both;
-      animation-timeline: --wordfill;
-      animation-range: contain calc(var(--i) * var(--step))
-        calc(var(--i) * var(--step) + 15%);
-    }
+  .wordfill {
+    opacity: 0.12;
+    animation: word-fill linear both;
+    animation-timeline: --wordfill;
+    animation-range: contain calc(var(--i) * var(--step))
+      calc(var(--i) * var(--step) + 15%);
   }
+}
+
+/* ponytail: the hero open runs in CSS, not Motion. As a JS animation its collapsed
+   initial state is server-rendered — the hero is fully clipped, i.e. invisible —
+   and it only expands once hydration lands, so on a cold load it pops instead of
+   opening. A keyframe animation starts at first paint with no JS involved. */
+@keyframes hero-open {
+  from {
+    clip-path: inset(50% 50% 50% 50% round 32px);
+  }
+  to {
+    clip-path: inset(0% 0% 0% 0% round 32px);
+  }
+}
+
+.hero-open {
+  animation: hero-open 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Fine grain texture over the whole page for warmth/depth */
