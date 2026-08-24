@@ -4,7 +4,6 @@ import { WorkSpans } from "./components/WorkSpans";
 import { Services } from "./components/Services";
 import { Consultation } from "./components/Consultation";
 import { Municipalities } from "./components/Municipalities";
-import { Team } from "./components/Team";
 import { Faq } from "./components/Faq";
 import { ContactCta } from "./components/ContactCta";
 import { getFeatured, getProjects } from "./lib/portfolio";
@@ -22,7 +21,6 @@ export default function Home() {
         <ContactCta invert />
         <Consultation />
         <Municipalities />
-        <Team />
         <Faq />
         <ContactCta />
       </main>

@@ -95,34 +95,6 @@ export function Nav() {
             </a>
           ))}
 
-          <a href={resolve("#projects")} aria-label="Search" className={pill}>
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3-3" strokeLinecap="round" />
-            </svg>
-          </a>
-          <a href={resolve("#contact")} aria-label="Call" className={pill}>
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                d="M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 5 5l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5a2 2 0 0 1 2-2Z"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
           <a
             href={resolve("/book")}
             className="flex items-center gap-1.5 rounded-lg bg-terracotta px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-cream backdrop-blur-md transition-colors duration-500 hover:bg-clay"
