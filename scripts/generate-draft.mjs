@@ -1,17 +1,20 @@
-// Generates one blog post targeting the next service in rotation and writes it
-// to content/posts/<slug>.json. Run locally (`npm run blog:draft`) or from CI,
-// where it opens a PR — that PR is the review/approval gate.
+// Generates one blog post targeting the next service in rotation and saves it
+// to Vercel Blob as a draft (same posts/<slug>.json shape the admin UI uses,
+// with draft: true). It shows up in /admin under "Pending review" — publish or
+// discard from there. Run locally (`npm run blog:draft`) or from CI.
 //
-// Needs ANTHROPIC_API_KEY. ponytail: no CMS, no queue table — a JSON file on a
-// branch IS the draft; merging the branch publishes it.
+// Needs ANTHROPIC_API_KEY and BLOB_READ_WRITE_TOKEN. ponytail: no CMS, no queue
+// table — a Blob JSON file with draft:true IS the draft; the admin UI is the
+// approval gate.
 
 import fs from "node:fs";
 import path from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
+import { put, list } from "@vercel/blob";
 
 const ROOT = process.cwd();
 const PORTFOLIO = path.join(ROOT, "public", "portfolio");
-const OUT_DIR = path.join(ROOT, "content", "posts");
+const BLOB_PREFIX = "posts/";
 const IMG_RE = /\.(jpe?g|png|webp)$/i;
 
 // Services we rotate through, each with the portfolio folders whose photos suit
@@ -72,8 +75,11 @@ function bodySchema(imageEnum) {
 }
 
 async function main() {
-  const existing = fs.existsSync(OUT_DIR) ? fs.readdirSync(OUT_DIR).filter((f) => f.endsWith(".json")) : [];
-  const service = SERVICES[existing.length % SERVICES.length];
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) throw new Error("BLOB_READ_WRITE_TOKEN is not set.");
+
+  const { blobs } = await list({ prefix: BLOB_PREFIX, token });
+  const service = SERVICES[blobs.length % SERVICES.length];
   const images = imagePool(service);
   if (images.length < 4) throw new Error("Not enough portfolio images to build a post.");
 
@@ -131,12 +137,18 @@ Rules:
     cover: post.coverSrc,
     coverAlt: post.coverAlt,
     body: post.body,
+    draft: true,
   };
 
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-  const outFile = path.join(OUT_DIR, `${slug}.json`);
-  fs.writeFileSync(outFile, JSON.stringify(record, null, 2) + "\n");
-  console.log(`Wrote ${path.relative(ROOT, outFile)} (service: ${service.name})`);
+  await put(`${BLOB_PREFIX}${slug}.json`, JSON.stringify(record, null, 2), {
+    access: "public",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+    cacheControlMaxAge: 0,
+    token,
+  });
+  console.log(`Saved draft "${record.title}" (service: ${service.name}) — review it in /admin.`);
 }
 
 main().catch((e) => {

@@ -1,6 +1,7 @@
-// ponytail: the seed post lives in code; every post after it is a JSON file in
-// content/posts/ (the automated writer drops one there via PR). getPosts()
-// merges both. No CMS until one's needed.
+// ponytail: the seed post lives in code; anything hand-placed as a JSON file in
+// content/posts/ is picked up too. The automated writer and the admin UI both
+// save to Vercel Blob instead — see blob-posts.ts. getPosts() merges all three.
+// No CMS until one's needed.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -36,6 +37,7 @@ export type Post = {
   cover: string;
   coverAlt: string;
   body: Block[];
+  draft?: boolean; // pending review in /admin — hidden from /blog until published
 };
 
 const WPM = 200;
@@ -168,17 +170,20 @@ function diskPosts(): Post[] {
 }
 
 // Three sources, later ones win by slug: seed (code) < content/posts (git, from
-// the automation) < Blob (the admin UI). Blob import is value-level; posts.ts is
-// only a type import there, so there's no runtime cycle.
-export async function getPosts(): Promise<Post[]> {
+// the automation) < Blob (the admin UI, and the automated drafts pending review).
+// Blob import is value-level; posts.ts is only a type import there, so there's
+// no runtime cycle.
+export async function getPosts({ includeDrafts = false } = {}): Promise<Post[]> {
   const { blobPosts } = await import("./blob-posts");
   const bySlug = new Map<string, Post>();
   for (const p of [...posts, ...diskPosts(), ...(await blobPosts())]) {
     bySlug.set(p.slug, p);
   }
-  return [...bySlug.values()].sort((a, b) => b.date.localeCompare(a.date));
+  return [...bySlug.values()]
+    .filter((p) => includeDrafts || !p.draft)
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export async function getPost(slug: string) {
-  return (await getPosts()).find((p) => p.slug === slug);
+export async function getPost(slug: string, { includeDrafts = false } = {}) {
+  return (await getPosts({ includeDrafts })).find((p) => p.slug === slug);
 }

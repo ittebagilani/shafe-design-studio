@@ -10,7 +10,7 @@ export default async function EditPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const post = await getPost(slug, { includeDrafts: true });
   if (!post) notFound();
   return <PostEditor initial={post} isNew={false} />;
 }

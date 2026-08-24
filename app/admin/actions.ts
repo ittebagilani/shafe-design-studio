@@ -46,3 +46,12 @@ export async function deletePostAction(slug: string) {
   revalidatePath("/admin");
   redirect("/admin");
 }
+
+export async function publishDraftAction(post: Post) {
+  await requireAuth();
+  await saveBlobPost({ ...post, draft: false });
+  updateTag("posts");
+  revalidatePath("/blog");
+  revalidatePath(`/blog/${post.slug}`);
+  revalidatePath("/admin");
+}
