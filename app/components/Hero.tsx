@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import type { Project } from "../lib/portfolio";
+import { LoadingCurtain } from "./LoadingCurtain";
 
 const DURATION = 5500;
 
@@ -13,7 +15,7 @@ declare global {
   }
 }
 
-// Fires once the hero's first image has loaded so the Nav can animate in after it.
+// Fires once the curtain has opened so the Nav can animate in after it.
 function signalHeroLoaded() {
   window.__heroLoaded = true;
   window.dispatchEvent(new Event("hero-loaded"));
@@ -21,16 +23,28 @@ function signalHeroLoaded() {
 
 export function Hero({ slides }: { slides: Project[] }) {
   const [i, setI] = useState(0);
+  const [imageReady, setImageReady] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setI((p) => (p + 1) % slides.length), DURATION);
     return () => clearInterval(t);
   }, [slides.length]);
 
+  useEffect(() => {
+    // ponytail: next/image can drop onLoad if decode() resolves after unmount,
+    // and a failed image never fires either handler — same guard as Nav's.
+    const t = setTimeout(() => setImageReady(true), 2500);
+    return () => clearTimeout(t);
+  }, []);
+
   const active = slides[i];
 
+  // pt matches Nav's rendered height (logo height + py-3*2) so the gap above
+  // the hero equals the nav's own top padding — keep the two in sync if
+  // either the nav logo size or its padding changes.
   return (
-    <section id="top" className="bg-cream px-3 pb-3 pt-[68px] md:px-4 md:pt-[76px]">
+    <section id="top" className="bg-cream px-3 pb-3 pt-[46px] md:px-4 md:pt-[49px]">
+      <LoadingCurtain ready={imageReady} onOpened={signalHeroLoaded} />
       <div
         data-nav-dark
         className="hero-open relative h-[calc(100vh-84px)] min-h-[560px] overflow-hidden rounded-3xl bg-espresso md:rounded-4xl"
@@ -59,8 +73,8 @@ export function Hero({ slides }: { slides: Project[] }) {
                 sizes="100vw"
                 className="object-cover"
                 style={{ filter: "sepia(0.28) saturate(1.05) brightness(0.92)" }}
-                onLoad={i === 0 ? signalHeroLoaded : undefined}
-                onError={i === 0 ? signalHeroLoaded : undefined}
+                onLoad={i === 0 ? () => setImageReady(true) : undefined}
+                onError={i === 0 ? () => setImageReady(true) : undefined}
               />
             </motion.div>
           </motion.div>
@@ -70,7 +84,11 @@ export function Hero({ slides }: { slides: Project[] }) {
 
         {/* Caption card */}
         <div className="absolute bottom-5 left-5 right-5 flex justify-start md:bottom-8 md:left-8 md:right-auto">
-          <div className="w-full max-w-md rounded-2xl border border-cream/10 bg-ink/55 px-6 pb-6 pt-4 backdrop-blur-md md:max-w-lg">
+          <motion.div
+            layout
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-md rounded-2xl border border-cream/10 bg-ink/55 px-6 pb-6 pt-4 backdrop-blur-md md:max-w-lg"
+          >
             <span className="mb-4 block h-px w-10 bg-cream/50" />
             <AnimatePresence mode="wait">
               <motion.div
@@ -89,15 +107,15 @@ export function Hero({ slides }: { slides: Project[] }) {
                     {active.meta}
                   </p>
                 </div>
-                <a
+                <Link
                   href={`/projects/${active.slug}`}
                   className="shrink-0 text-xs uppercase tracking-[0.25em] text-cream transition-colors hover:text-terracotta"
                 >
                   View
-                </a>
+                </Link>
               </motion.div>
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
 
         {/* Slide indicators */}

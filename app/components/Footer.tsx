@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function Footer() {
@@ -16,7 +17,13 @@ export function Footer() {
       <div className="mx-auto w-full max-w-[1600px] px-6 py-14 md:px-10 md:py-16">
         <div className="flex flex-col justify-between gap-10 md:flex-row">
           <div>
-            <p className="text-3xl text-cream">SHAFE Design Studio</p>
+            <Image
+              src="/images/logo/shafe-logo-transparent.png"
+              alt="SHAFE Design Studio"
+              width={4000}
+              height={1928}
+              className="h-16 w-auto brightness-0 invert md:h-20"
+            />
             <p className="mt-3 max-w-xs text-sm">
               Interior design, architecture, and permit drawings across the region.
             </p>

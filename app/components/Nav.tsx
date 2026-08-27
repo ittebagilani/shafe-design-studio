@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -78,29 +80,41 @@ export function Nav() {
         className="pointer-events-none absolute inset-x-0 top-0 h-[180%] backdrop-blur-md [-webkit-mask-image:linear-gradient(to_bottom,black_35%,transparent)] [mask-image:linear-gradient(to_bottom,black_35%,transparent)]"
       />
       <nav className="relative flex items-center justify-between px-5 py-3 md:px-8">
-        <a
-          href={resolve("#top")}
-          className={`mt-1 font-wordmark text-3xl font-bold leading-none tracking-tight transition-colors duration-500 ${
-            dark ? "text-cream" : "text-ink"
-          }`}
+        <Link
+          href={resolve("/")}
+          aria-label="SHAFE Design Studio, home"
+          className="flex items-center"
         >
-          SHAFE
-        </a>
+          <Image
+            src="/images/logo/shafe-logo.png"
+            alt="SHAFE Design Studio"
+            width={4000}
+            height={974}
+            priority
+            className={`h-9 w-auto transition-[filter] duration-500 md:h-10 ${
+              dark ? "brightness-0 invert" : ""
+            }`}
+          />
+        </Link>
 
         <div className="flex items-center gap-2">
           {links.map((l) => (
-            <a key={l.label} href={resolve(l.href)} className={`${pill} hidden sm:flex`}>
+            <Link
+              key={l.label}
+              href={resolve(l.href)}
+              className={`${pill} hidden sm:flex`}
+            >
               {l.label}
               {l.plus && <span className="text-sm leading-none">+</span>}
-            </a>
+            </Link>
           ))}
 
-          <a
+          <Link
             href={resolve("/book")}
             className="flex items-center gap-1.5 rounded-lg bg-terracotta px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-cream backdrop-blur-md transition-colors duration-500 hover:bg-clay"
           >
             Book Now
-          </a>
+          </Link>
         </div>
       </nav>
     </motion.header>

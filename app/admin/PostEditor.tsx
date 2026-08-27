@@ -3,6 +3,7 @@
 import { useState, useTransition, useId } from "react";
 import { useRouter } from "next/navigation";
 import type { Post, Block } from "../lib/posts";
+import { PostView } from "../components/PostView";
 import { savePostAction, uploadAction } from "./actions";
 
 type IdBlock = Block & { _id: string };
@@ -89,6 +90,7 @@ export function PostEditor({ initial, isNew }: { initial: Post; isNew: boolean }
   const router = useRouter();
   const [saving, startSave] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [previewing, setPreviewing] = useState(false);
 
   const [title, setTitle] = useState(initial.title);
   const [dek, setDek] = useState(initial.dek);
@@ -138,17 +140,56 @@ export function PostEditor({ initial, isNew }: { initial: Post; isNew: boolean }
     });
   }
 
+  // What PostView would render right now, unsaved — the same shape save()
+  // sends to the server, just recomputed on every render instead of on submit.
+  const previewPost: Post = {
+    slug: initial.slug || "preview",
+    title: title.trim(),
+    dek,
+    category,
+    date,
+    cover,
+    coverAlt,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    body: blocks.map(({ _id, ...b }) => b as Block),
+  };
+
   return (
     <div>
-      <div className="flex items-center justify-between">
+      {previewing && (
+        <div className="fixed inset-0 z-40 overflow-y-auto bg-cream">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-umber/15 bg-cream/95 px-6 py-3 backdrop-blur-sm">
+            <span className="text-xs uppercase tracking-[0.18em] text-umber">
+              Preview — not yet saved
+            </span>
+            <button
+              onClick={() => setPreviewing(false)}
+              className="rounded-lg border border-umber/25 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-umber transition-colors hover:border-terracotta hover:text-terracotta"
+            >
+              ← Back to editing
+            </button>
+          </div>
+          <PostView post={previewPost} />
+        </div>
+      )}
+
+      <div className="flex items-center justify-between gap-4">
         <h1 className="font-display text-3xl text-ink">{isNew ? "New post" : "Edit post"}</h1>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="rounded-lg bg-terracotta px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-cream transition-colors hover:bg-clay disabled:opacity-60"
-        >
-          {saving ? "Saving…" : "Save & publish"}
-        </button>
+        <div className="flex shrink-0 items-center gap-3">
+          <button
+            onClick={() => setPreviewing(true)}
+            className="rounded-lg border border-umber/25 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-umber transition-colors hover:border-terracotta hover:text-terracotta"
+          >
+            Preview
+          </button>
+          <button
+            onClick={save}
+            disabled={saving}
+            className="rounded-lg bg-terracotta px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-cream transition-colors hover:bg-clay disabled:opacity-60"
+          >
+            {saving ? "Saving…" : "Save & publish"}
+          </button>
+        </div>
       </div>
       {error && <p className="mt-4 text-sm text-terracotta">{error}</p>}
 

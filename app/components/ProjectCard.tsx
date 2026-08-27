@@ -1,15 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
 import type { Project } from "../lib/portfolio";
 
 // Cycle of aspect ratios so the masonry stays varied regardless of image count.
 const ratios = ["aspect-[3/4]", "aspect-[4/3]", "aspect-[4/5]", "aspect-square"];
 
+const MotionLink = motion.create(Link);
+
 export function ProjectCard({ p, index }: { p: Project; index: number }) {
   return (
-    <motion.a
+    <MotionLink
       href={`/projects/${p.slug}`}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -41,6 +44,6 @@ export function ProjectCard({ p, index }: { p: Project; index: number }) {
           </span>
         </div>
       </div>
-    </motion.a>
+    </MotionLink>
   );
 }

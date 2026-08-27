@@ -46,12 +46,11 @@ export function WorkSpans({ images }: { images: string[] }) {
       </p>
 
       {/* Expanding gallery: equal by default; hovered item grows, others stay equal. */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-start [&:has(a:hover)_a:not(:hover)_h3]:opacity-0">
+      <div className="flex flex-col gap-3 md:flex-row md:items-start [&:has(.span-item:hover)_.span-item:not(:hover)_h3]:opacity-0">
         {disciplines.map((d, i) => (
-            <a
+            <div
               key={d}
-              href="#projects"
-              className="flex flex-col md:min-w-0 md:flex-1 md:basis-0 md:transition-[flex-grow] md:duration-500 md:ease-out md:hover:grow-[2.5]"
+              className="span-item flex flex-col md:min-w-0 md:flex-1 md:basis-0 md:transition-[flex-grow] md:duration-500 md:ease-out md:hover:grow-[2.5]"
             >
               {/* ponytail: background-image (not next/image) so widening the fixed-height
                   box reveals more of the picture at constant scale — expand, no zoom.
@@ -64,9 +63,8 @@ export function WorkSpans({ images }: { images: string[] }) {
               </div>
               <h3 className="font-grotesk mt-4 flex items-center gap-2 text-2xl text-ink transition-opacity duration-500 ease-out md:text-3xl">
                 {d}
-                <span className="text-clay">→</span>
               </h3>
-            </a>
+            </div>
         ))}
       </div>
       </div>

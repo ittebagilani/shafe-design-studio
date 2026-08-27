@@ -37,7 +37,6 @@
   --radius-3xl: 0.45rem;
   --radius-4xl: 0.6rem;
   --font-display: var(--font-display);
-  --font-wordmark: var(--font-wordmark), Georgia, serif;
   --font-grotesk: var(--font-grotesk), Helvetica, Arial, sans-serif;
 }
 
@@ -66,11 +65,6 @@ h6,
   font-weight: 400;
   letter-spacing: 0em;
   line-height: 1.1;
-}
-
-/* The SHAFE wordmark stays on Cardo regardless of the heading face. */
-.font-wordmark {
-  font-family: var(--font-wordmark), Georgia, serif;
 }
 
 /* ponytail: word-by-word reveal via CSS scroll-driven animation — no JS, no GSAP.

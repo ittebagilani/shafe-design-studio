@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Reveal } from "./Reveal";
 import { ProjectCard } from "./ProjectCard";
 import type { Project } from "../lib/portfolio";
@@ -23,13 +24,13 @@ export function FeaturedWorks({ projects }: { projects: Project[] }) {
       </div>
 
       <div className="mt-12 flex justify-center">
-        <a
+        <Link
           href="/projects"
           className="group inline-flex items-center gap-2 rounded-full bg-ink/[0.06] px-6 py-3 text-xs uppercase tracking-[0.18em] text-ink transition-colors hover:bg-ink/[0.12]"
         >
           All Work
           <span className="transition-transform group-hover:translate-x-1">→</span>
-        </a>
+        </Link>
       </div>
 
       <hr className="mx-auto mt-16 max-w-[1600px] border-umber/15" />

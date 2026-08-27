@@ -113,12 +113,6 @@ export default async function AdminHome() {
           );
         })}
       </ul>
-
-      <p className="mt-8 text-sm text-umber/70">
-        Posts marked <span className="text-clay">editable</span> are stored in Vercel Blob and can
-        be changed here. Posts “from code/git” come from the seed post —
-        edit those in the repo (editing one here saves an overriding copy to Blob).
-      </p>
     </div>
   );
 }

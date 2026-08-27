@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import Link from "next/link";
 
 export function ContactCta({ invert = false }: { invert?: boolean }) {
   return (
@@ -40,7 +41,7 @@ export function ContactCta({ invert = false }: { invert?: boolean }) {
             timeline — no commitment, just a clear next step.
           </p>
         </div>
-        <a
+        <Link
           href="/book"
           className={`group inline-flex shrink-0 items-center gap-3 rounded-full px-8 py-4 text-sm uppercase tracking-[0.2em] transition-colors hover:bg-terracotta hover:text-cream ${
             invert ? "bg-ink text-cream" : "bg-cream text-ink"
@@ -48,7 +49,7 @@ export function ContactCta({ invert = false }: { invert?: boolean }) {
         >
           Book Now
           <span className="transition-transform group-hover:translate-x-1">→</span>
-        </a>
+        </Link>
       </motion.div>
     </section>
   );

@@ -9,13 +9,12 @@ import {
   type MotionValue,
 } from "motion/react";
 
-// TODO: replace this template copy with the real studio story.
 const paragraphs = [
-  "Our studio is a quiet workshop for the built environment — a place where drawings, models, and material samples share the same long table. Every project begins here, in conversation, long before the first line is drawn.",
-  "We designed the space the way we design for our clients: with daylight, natural materials, and room to think. Warm timber, soft clay tones, and open sightlines keep the atmosphere calm and unhurried.",
-  "The environment shapes the practice. Plants soften the corners, north light steadies the afternoons, and a shared library of references keeps ideas circulating between the people who make them.",
-  "Sustainability is not a department here; it is the default. We prototype with offcuts, reuse where we can, and choose materials that age gracefully rather than wear out.",
-  "Above all, it is a place for people. Clients, collaborators, and neighbours pass through the same door, and the best decisions still happen over coffee, around the model.",
+  "This is where SHAFE actually works — a small studio in Oakville where design, architecture, and permit drawings happen at the same table.",
+  "Every project starts on paper: sketches, site surveys, and material samples, worked through long before a single wall moves.",
+  "We know the municipal process from Oakville to Hamilton, so what leaves this room is built to pass — not just to look good.",
+  "A custom home, an addition, a legal basement suite — the same studio carries it end to end, design through permit.",
+  "It stays small on purpose. Fewer projects, more attention, and the person who draws it is the one you'll actually talk to.",
 ];
 
 // Scattered fixed slots the images animate within. Cycles for any image count.

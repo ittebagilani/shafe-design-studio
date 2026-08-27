@@ -1,17 +1,9 @@
 import type { Metadata } from "next";
-import { Cardo, EB_Garamond, Space_Grotesk } from "next/font/google";
+import { EB_Garamond, Space_Grotesk } from "next/font/google";
 import { SmoothScroll } from "./components/SmoothScroll";
 import { Nav } from "./components/Nav";
 import { SiteFooter } from "./components/SiteFooter";
 import "./globals.css";
-
-// Cardo is kept for the SHAFE wordmark only; headings run on EB Garamond.
-const cardo = Cardo({
-  variable: "--font-wordmark",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-});
 
 const ebGaramond = EB_Garamond({
   variable: "--font-display",
@@ -40,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cardo.variable} ${ebGaramond.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${ebGaramond.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <SmoothScroll>
