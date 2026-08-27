@@ -15,6 +15,21 @@
   --background: var(--cream);
   --foreground: var(--ink);
   --spacing: 0.19rem;
+
+  /* Nav's rendered height (logo height + py-3*2) — shared by Hero's top
+     padding and the scroll-padding-top below so #hash links don't land
+     their target underneath the fixed nav. */
+  --nav-h: 46px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --nav-h: 49px;
+  }
+}
+
+html {
+  scroll-padding-top: var(--nav-h);
 }
 
 @theme inline {

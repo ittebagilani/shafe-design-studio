@@ -12,7 +12,7 @@ export function SiteFooter() {
   if (hidden.includes(pathname)) return null;
   return (
     <StickyFooter>
-      <Footer />
+      <Footer showMap={pathname === "/"} />
     </StickyFooter>
   );
 }

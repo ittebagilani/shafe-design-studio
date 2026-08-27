@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useId } from "react";
+import { useEffect, useState, useTransition, useId } from "react";
 import { useRouter } from "next/navigation";
 import type { Post, Block } from "../lib/posts";
 import { PostView } from "../components/PostView";
@@ -91,6 +91,18 @@ export function PostEditor({ initial, isNew }: { initial: Post; isNew: boolean }
   const [saving, startSave] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [previewing, setPreviewing] = useState(false);
+
+  // The preview overlay is `fixed`, but the admin page underneath stays
+  // scrollable unless we lock it — otherwise a wheel/trackpad scroll can
+  // move either container depending on where the cursor lands.
+  useEffect(() => {
+    if (!previewing) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [previewing]);
 
   const [title, setTitle] = useState(initial.title);
   const [dek, setDek] = useState(initial.dek);

@@ -7,7 +7,15 @@
 // BOOKING_FROM_EMAIL defaults to Resend's shared onboarding sender, which works
 // with no domain setup; swap it for an address on your verified domain later.
 
+import { bookedSlots, reserveSlot } from "../lib/bookings";
+
 export type BookingState = { ok: boolean; error?: string };
+
+// Called from the client as the date/slot are picked, so already-booked
+// times can be greyed out before the user even tries to submit.
+export async function getBookedSlots(date: string): Promise<string[]> {
+  return bookedSlots(date);
+}
 
 const FIELDS = [
   ["call", "Call"],
@@ -19,6 +27,7 @@ const FIELDS = [
   ["budget", "Budget"],
   ["timeline", "Timeline"],
   ["referral", "Heard about us"],
+  ["referredBy", "Referred by"],
   ["date", "Preferred date"],
   ["slot", "Time slot"],
 ] as const;
@@ -50,6 +59,14 @@ export async function submitBooking(
   if (!v.name || !v.email) return { ok: false, error: "Name and email are required." };
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email))
     return { ok: false, error: "Please enter a valid email." };
+  if (!v.date || !v.slot) return { ok: false, error: "Please pick a date and time." };
+
+  // Reserve before emailing — a failed reservation means someone else just
+  // took this slot, so there's nothing to send.
+  const reserved = await reserveSlot(v.date, v.slot);
+  if (!reserved) {
+    return { ok: false, error: "That time was just booked — please pick another." };
+  }
 
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.BOOKING_TO_EMAIL;

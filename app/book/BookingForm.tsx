@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { submitBooking, type BookingState } from "./actions";
+import { getBookedSlots, submitBooking, type BookingState } from "./actions";
 
 type Step = {
   name: string;
@@ -114,7 +114,7 @@ const STEPS: Step[] = [
       { value: "Web search" },
     ],
   },
-  { name: "date", no: "11", prompt: "A preferred date?", hint: "Optional", type: "date" },
+  { name: "date", no: "11", prompt: "Pick a date.", type: "date", required: true },
   { name: "slot", no: "12", prompt: "Pick a time that works.", hint: "All times ET", type: "slots", required: true },
 ];
 
@@ -142,14 +142,33 @@ export function BookingForm() {
   const [othered, setOthered] = useState<Record<string, boolean>>({});
   const [revealed, setRevealed] = useState(0); // highest step index shown
   const [error, setError] = useState<string | null>(null);
+  const [taken, setTaken] = useState<string[]>([]); // slots already booked on values.date
   const formRef = useRef<HTMLFormElement>(null);
   const sections = useRef<(HTMLElement | null)[]>([]);
+
+  // Grey out already-booked slots as soon as a date is picked, instead of
+  // letting someone pick a taken time and only finding out on submit.
+  useEffect(() => {
+    const date = values.date;
+    if (!date) return setTaken([]);
+    let live = true;
+    getBookedSlots(date).then((slots) => {
+      if (live) setTaken(slots);
+    });
+    return () => {
+      live = false;
+    };
+  }, [values.date]);
 
   function validate(step: Step): string | null {
     const v = (values[step.name] ?? "").trim();
     if (step.required && !v) return "This one's required.";
     if (step.name === "email" && v && !EMAIL_RE.test(v))
       return "Please enter a valid email.";
+    if (step.name === "referral" && v === "Referral" && !(values.referredBy ?? "").trim())
+      return "Who referred you?";
+    if (step.name === "slot" && v && taken.includes(v))
+      return "That time's taken — pick another.";
     return null;
   }
 
@@ -231,21 +250,28 @@ export function BookingForm() {
                 <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {SLOTS.map((slot) => {
                     const active = values[step.name] === slot;
+                    const booked = taken.includes(slot);
                     return (
                       <button
                         key={slot}
                         type="button"
+                        disabled={booked}
                         onClick={() => {
                           setValues((v) => ({ ...v, [step.name]: slot }));
                           setError(null);
                         }}
-                        className={`cursor-pointer rounded-lg border px-4 py-3 text-sm transition-colors ${
-                          active
-                            ? "border-terracotta bg-terracotta text-cream"
-                            : "border-umber/25 text-umber hover:border-terracotta"
+                        className={`rounded-lg border px-4 py-3 text-sm transition-colors ${
+                          booked
+                            ? "cursor-not-allowed border-umber/10 text-umber/35 line-through"
+                            : active
+                              ? "cursor-pointer border-terracotta bg-terracotta text-cream"
+                              : "cursor-pointer border-umber/25 text-umber hover:border-terracotta"
                         }`}
                       >
                         {slot}
+                        {booked && (
+                          <span className="ml-2 text-xs normal-case text-umber/40">Booked</span>
+                        )}
                       </button>
                     );
                   })}
@@ -308,6 +334,24 @@ export function BookingForm() {
                       value={values[step.name] ?? ""}
                       onChange={(e) =>
                         setValues((v) => ({ ...v, [step.name]: e.target.value }))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          next(i);
+                        }
+                      }}
+                      className="mt-6 w-full border-b-2 border-umber/25 bg-transparent pb-3 text-xl text-ink outline-none transition-colors focus:border-terracotta"
+                    />
+                  )}
+                  {step.name === "referral" && values.referral === "Referral" && (
+                    <input
+                      autoFocus
+                      name="referredBy"
+                      placeholder="Who referred you?"
+                      value={values.referredBy ?? ""}
+                      onChange={(e) =>
+                        setValues((v) => ({ ...v, referredBy: e.target.value }))
                       }
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {

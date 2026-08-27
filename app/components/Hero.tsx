@@ -39,11 +39,8 @@ export function Hero({ slides }: { slides: Project[] }) {
 
   const active = slides[i];
 
-  // pt matches Nav's rendered height (logo height + py-3*2) so the gap above
-  // the hero equals the nav's own top padding — keep the two in sync if
-  // either the nav logo size or its padding changes.
   return (
-    <section id="top" className="bg-cream px-3 pb-3 pt-[46px] md:px-4 md:pt-[49px]">
+    <section id="top" className="bg-cream px-3 pb-3 pt-(--nav-h) md:px-4">
       <LoadingCurtain ready={imageReady} onOpened={signalHeroLoaded} />
       <div
         data-nav-dark

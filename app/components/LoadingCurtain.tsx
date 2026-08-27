@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useLenis } from "lenis/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -25,12 +26,27 @@ export function LoadingCurtain({
   const [gone, setGone] = useState(false);
 
   const open = !skip && ready && barDone;
+  const active = !skip && !gone;
+  const lenis = useLenis();
 
   useEffect(() => {
     if (skip) return;
     const t = setTimeout(() => setBarStarted(true), FADE_S * 1000);
     return () => clearTimeout(t);
   }, [skip]);
+
+  // The page uses Lenis for smooth scroll, which drives its own transform
+  // loop and hijacks wheel/touch input directly — body { overflow: hidden }
+  // alone doesn't stop it, so it has to be told to stop too.
+  useEffect(() => {
+    if (!active || !lenis) return;
+    document.body.style.overflow = "hidden";
+    lenis.stop();
+    return () => {
+      document.body.style.overflow = "";
+      lenis.start();
+    };
+  }, [active, lenis]);
 
   if (skip || gone) return null;
 
