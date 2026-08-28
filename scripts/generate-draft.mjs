@@ -1,7 +1,11 @@
-// Generates one blog post targeting the next service in rotation and saves it
+// Generates one blog post targeting the next topic in rotation and saves it
 // to Vercel Blob as a draft (same posts/<slug>.json shape the admin UI uses,
 // with draft: true). It shows up in /admin under "Pending review" — publish or
 // discard from there. Run locally (`npm run blog:draft`) or from CI.
+//
+// Posts are general-inquiry / FAQ content (permits, ARUs, budgets, process —
+// the things prospective clients actually ask), not project write-ups: the
+// model is told not to narrate any photo as a specific past project or client.
 //
 // Needs ANTHROPIC_API_KEY and BLOB_READ_WRITE_TOKEN. ponytail: no CMS, no queue
 // table — a Blob JSON file with draft:true IS the draft; the admin UI is the
@@ -17,15 +21,21 @@ const PORTFOLIO = path.join(ROOT, "public", "portfolio");
 const BLOB_PREFIX = "posts/";
 const IMG_RE = /\.(jpe?g|png|webp)$/i;
 
-// Services we rotate through, each with the portfolio folders whose photos suit
-// it. Keep in sync with app/components/Services.tsx.
-const SERVICES = [
-  { name: "Custom Home Design", match: /custom house/i },
-  { name: "Residential Additions", match: /addition|renovation/i },
-  { name: "Basements & Legal Suites (ARUs)", match: /aru|additional residential/i },
-  { name: "Development (Residential & Commercial)", match: /development|triplex|townhouse|commercial/i },
-  { name: "Rezoning & Minor Variance Applications", match: /development|extension|addition/i },
-  { name: "Interior Design & Renovations", match: /renovation|salon|clinic|restaurant|dental/i },
+// Topics prospective clients actually ask about, grounded in the studio's
+// real services (app/components/Services.tsx) and the municipalities it
+// works in (app/components/Municipalities.tsx) — but framed as general
+// inquiries, not a write-up of any particular job.
+const TOPICS = [
+  "How long a building permit actually takes in Ontario, and what slows it down",
+  "Renovation vs. addition: which permit path applies and why it matters for cost",
+  "Legal basement suites (ARUs): what qualifies, what it costs, and what trips people up",
+  "Minor variance vs. rezoning application: what's the difference and when each is needed",
+  "What an architect does that a designer doesn't, and when you need which",
+  "Custom home vs. major renovation: how to actually decide between the two",
+  "What to budget for permit drawings and approvals before construction starts",
+  "How the process differs by municipality — Oakville, Burlington, Milton, Mississauga, Hamilton, Peterborough",
+  "Site plan approval: what triggers it and how long it realistically adds",
+  "What a first consultation with a design studio should cover",
 ];
 
 function enc(folder, file) {
@@ -36,9 +46,10 @@ function slugify(s) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-// Build an image pool: photos from folders matching the service, topped up with
-// others so the model always has variety. Returned as encoded /portfolio/... URLs.
-function imagePool(service) {
+// A broad, unfiltered sample across every portfolio folder — these posts
+// aren't about any one project, so the pool isn't matched to a topic, just
+// varied enough that the model can pick fitting general texture.
+function imagePool() {
   const folders = fs.readdirSync(PORTFOLIO, { withFileTypes: true }).filter((d) => d.isDirectory());
   const pick = (folder) =>
     fs
@@ -46,9 +57,7 @@ function imagePool(service) {
       .filter((f) => IMG_RE.test(f))
       .slice(0, 2)
       .map((f) => enc(folder.name, f));
-  const matched = folders.filter((d) => service.match.test(d.name)).flatMap(pick);
-  const rest = folders.filter((d) => !service.match.test(d.name)).flatMap(pick);
-  return [...matched, ...rest].slice(0, 16);
+  return folders.flatMap(pick).slice(0, 20);
 }
 
 function bodySchema(imageEnum) {
@@ -79,8 +88,8 @@ async function main() {
   if (!token) throw new Error("BLOB_READ_WRITE_TOKEN is not set.");
 
   const { blobs } = await list({ prefix: BLOB_PREFIX, token });
-  const service = SERVICES[blobs.length % SERVICES.length];
-  const images = imagePool(service);
+  const topic = TOPICS[blobs.length % TOPICS.length];
+  const images = imagePool();
   if (images.length < 4) throw new Error("Not enough portfolio images to build a post.");
 
   const client = new Anthropic();
@@ -111,12 +120,17 @@ async function main() {
         role: "user",
         content: `You write the blog for SHAFE, an Ontario architecture & design studio (custom homes, additions, legal basement suites/ARUs, development, rezoning). Warm, editorial, concrete — never salesy or listy.
 
-Write ONE post that leads with the service "${service.name}" while weaving in the studio's other services where natural.
+Write ONE general-inquiry post answering: "${topic}"
+
+This is educational content for someone researching before they've hired anyone — not a project write-up. Draw on the studio's real expertise and service area, but:
+- Never say "we recently completed," "this project," "one of our clients," or otherwise imply the piece describes specific past work.
+- Photos are illustrative texture only (a home exterior, a construction detail, an interior) — caption them generically (e.g. "A custom addition mid-construction"), never as if they document the specific case being discussed.
+- Answer the question directly and concretely — real numbers, real timelines, real trade-offs — rather than vague reassurance.
 
 Rules:
 - At least 4 minutes to read (~900+ words across the text blocks).
 - Use a varied structure: several "p" paragraphs, 2-3 "h2" headings, one "quote", and 3-4 figure blocks (mix of "full", "duo", and "offset" — do not repeat one figure type).
-- Every image src/alt MUST be chosen from the provided photo list; pick photos that suit the surrounding text. Give each a short factual caption.
+- Every image src/alt MUST be chosen from the provided photo list; pick photos that suit the surrounding text.
 - "category" should be a short section label like "Field Notes" or "Design Notes".
 - Do not invent image paths.`,
       },
@@ -148,7 +162,7 @@ Rules:
     cacheControlMaxAge: 0,
     token,
   });
-  console.log(`Saved draft "${record.title}" (service: ${service.name}) — review it in /admin.`);
+  console.log(`Saved draft "${record.title}" (topic: ${topic}) — review it in /admin.`);
 }
 
 main().catch((e) => {

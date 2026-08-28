@@ -15,10 +15,10 @@ declare global {
   }
 }
 
-// Fires once the curtain has opened so the Nav can animate in after it.
+// Marks the curtain as already shown, so LoadingCurtain skips it on any
+// later mount within this session (client-side nav back to "/").
 function signalHeroLoaded() {
   window.__heroLoaded = true;
-  window.dispatchEvent(new Event("hero-loaded"));
 }
 
 export function Hero({ slides }: { slides: Project[] }) {

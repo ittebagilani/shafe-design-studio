@@ -26,17 +26,14 @@ export function Footer({ showMap = false }: { showMap?: boolean }) {
             height={1928}
             className="h-32 w-auto brightness-0 invert md:h-44"
           />
-          <p className="mt-3 max-w-xs text-sm">
-            Interior design, architecture, and permit drawings across the region.
-          </p>
 
-          <div className="mt-12 grid grid-cols-2 gap-10 text-sm sm:grid-cols-3">
-            <div className="flex flex-col items-center gap-3">
+          <div className="grid grid-cols-2 gap-10 text-sm sm:grid-cols-2">
+            {/* <div className="flex flex-col items-center gap-3">
               <span className="text-xs uppercase tracking-[0.2em] text-sand">Studio</span>
               <Link href="/projects" className="hover:text-cream">Projects</Link>
               <Link href="/blog" className="hover:text-cream">Blog</Link>
               <Link href="/office" className="hover:text-cream">Office</Link>
-            </div>
+            </div> */}
             <div className="flex flex-col items-center gap-3">
               <span className="text-xs uppercase tracking-[0.2em] text-sand">Contact</span>
               <a href="mailto:info@shafeinc.com" className="hover:text-cream">

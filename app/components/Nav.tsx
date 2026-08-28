@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,23 +21,7 @@ export function Nav() {
   // them back to the homepage section instead.
   const resolve = (h: string) => (h.startsWith("#") && !isHome ? `/${h}` : h);
 
-  const [heroLoaded, setHeroLoaded] = useState(false);
   const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    if (!isHome) return setHeroLoaded(true);
-    if (window.__heroLoaded) return setHeroLoaded(true);
-    const onLoaded = () => setHeroLoaded(true);
-    window.addEventListener("hero-loaded", onLoaded);
-    // ponytail: the hero's onLoad can silently never fire — next/image drops it if
-    // img.decode() resolves after unmount, and a failed image never loads at all.
-    // Without this the navbar stays at opacity 0 forever. Reveal regardless.
-    const t = setTimeout(onLoaded, 2500);
-    return () => {
-      window.removeEventListener("hero-loaded", onLoaded);
-      clearTimeout(t);
-    };
-  }, [isHome]);
 
   // Flip to light text whenever a [data-nav-dark] region sits behind the navbar.
   useEffect(() => {
@@ -67,13 +50,12 @@ export function Nav() {
     };
   }, []);
 
+  // No entrance animation: the loading curtain (z-100, above this) already
+  // covers the whole page while it's up, so the nav — blur included — is
+  // fully settled underneath it and just appears, already resolved, the
+  // instant the curtain opens, instead of visibly popping in afterward.
   return (
-    <motion.header
-      initial={{ y: -60, opacity: 0 }}
-      animate={heroLoaded ? { y: 0, opacity: 1 } : undefined}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50 bg-transparent"
-    >
+    <header className="fixed inset-x-0 top-0 z-50 bg-transparent">
       {/* Progressive blur: fades the blur out at the bottom so there's no hard edge */}
       <div
         aria-hidden
@@ -117,6 +99,6 @@ export function Nav() {
           </Link>
         </div>
       </nav>
-    </motion.header>
+    </header>
   );
 }

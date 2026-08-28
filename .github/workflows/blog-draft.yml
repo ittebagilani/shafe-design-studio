@@ -1,12 +1,15 @@
 name: Draft blog post
 
-# Weekly draft for review. Saves straight to Vercel Blob as an unpublished
-# draft (draft: true) — it shows up in /admin under "Pending review", where
-# publishing or discarding it is the approval gate. Also runnable on demand
-# from the Actions tab.
+# Draft every 2 days for review. Saves straight to Vercel Blob as an
+# unpublished draft (draft: true) — it shows up in /admin under "Pending
+# review", where publishing or discarding it is the approval gate. Also
+# runnable on demand from the Actions tab.
+# ponytail: cron has no native "every N days" — day-of-month */2 is the
+# standard way to express it, at the cost of two runs landing back-to-back
+# across a month boundary (e.g. the 31st then the 1st) a few times a year.
 on:
   schedule:
-    - cron: "0 13 * * 1" # Mondays 13:00 UTC
+    - cron: "0 13 */2 * *" # Every 2 days, 13:00 UTC
   workflow_dispatch:
 
 jobs:
