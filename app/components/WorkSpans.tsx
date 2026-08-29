@@ -11,8 +11,12 @@ export function WorkSpans({ images }: { images: string[] }) {
 
   return (
     <section id="studio">
-      <div className="wordfill-scope relative h-[240vh]">
-        <div className="sticky top-0 flex h-screen items-center">
+      {/* dvh, not vh: mobile browsers size vh for the largest possible viewport
+          (toolbar hidden), but the scroll-driven word-fill below tracks the
+          real, live viewport — the mismatch made the animation-range math run
+          out ahead of the actual scrollable distance, cutting off early words. */}
+      <div className="wordfill-scope relative h-[240dvh]">
+        <div className="sticky top-0 flex h-dvh items-center">
           <div className="mx-auto grid w-full max-w-[1600px] items-start gap-10 px-6 md:grid-cols-12 md:px-10">
             <div className="md:col-span-3">
               <p className="text-xs uppercase tracking-[0.3em] text-clay">
