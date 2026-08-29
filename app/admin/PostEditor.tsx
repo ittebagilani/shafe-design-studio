@@ -169,7 +169,10 @@ export function PostEditor({ initial, isNew }: { initial: Post; isNew: boolean }
   return (
     <div>
       {previewing && (
-        <div className="fixed inset-0 z-40 overflow-y-auto bg-cream">
+        <div
+          data-lenis-prevent
+          className="fixed inset-0 z-40 overflow-y-auto bg-cream"
+        >
           <div className="sticky top-0 z-10 flex items-center justify-between border-b border-umber/15 bg-cream/95 px-6 py-3 backdrop-blur-sm">
             <span className="text-xs uppercase tracking-[0.18em] text-umber">
               Preview — not yet saved
