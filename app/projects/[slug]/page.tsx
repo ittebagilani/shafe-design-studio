@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProject, getProjects } from "../../lib/portfolio";
 import { Reveal } from "../../components/Reveal";
+import { breadcrumbJsonLd } from "../../lib/site";
 
 export function generateStaticParams() {
   return getProjects().map((p) => ({ slug: p.slug }));
@@ -133,8 +134,19 @@ export default async function ProjectPage({
   const project = all[index];
   const next = all[(index + 1) % all.length];
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "All Work", path: "/projects" },
+    { name: project.name, path: `/projects/${project.slug}` },
+  ]);
+
   return (
     <div className="grain min-h-screen bg-cream">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
       <main className="mx-auto max-w-[1600px] px-4 pb-24 pt-28 md:px-8 md:pt-32">
         <Reveal className="mb-10 md:mb-16">
           <p className="text-[0.7rem] uppercase tracking-[0.3em] text-umber">

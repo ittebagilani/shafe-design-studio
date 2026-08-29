@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPost, getPosts } from "../../lib/posts";
 import { PostView } from "../../components/PostView";
-import { SITE_NAME, SITE_URL } from "../../lib/site";
+import { SITE_NAME, SITE_URL, breadcrumbJsonLd } from "../../lib/site";
 
 export const revalidate = 60;
 
@@ -56,12 +56,23 @@ export default async function PostPage({
     mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
   };
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.title, path: `/blog/${post.slug}` },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <PostView
         post={post}

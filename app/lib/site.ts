@@ -19,3 +19,18 @@ export const BUSINESS = {
   instagram: "https://www.instagram.com/shafe.inc/",
   municipalities: ["Oakville", "Burlington", "Milton", "Peterborough", "Mississauga", "Hamilton"],
 };
+
+// So Google can render the "Home > Projects > X" trail in search results
+// instead of a bare URL. Pass path segments only; SITE_URL is prepended.
+export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: `${SITE_URL}${item.path}`,
+    })),
+  };
+}
