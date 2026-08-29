@@ -61,9 +61,26 @@ function Item({ q, a, index }: { q: string; a: string; index: number }) {
   );
 }
 
+// Same faqs array as the visible list below — one source of truth, so the
+// structured data can't say something different from what's on the page.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 export function Faq() {
   return (
     <section className="mx-auto max-w-[1600px] px-6 py-24 md:px-10 md:py-32">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="grid gap-12 md:grid-cols-12">
         <div className="md:col-span-4">
           <Reveal>

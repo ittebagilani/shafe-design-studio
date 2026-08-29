@@ -41,6 +41,13 @@ export function Hero({ slides }: { slides: Project[] }) {
 
   return (
     <section id="top" className="bg-cream px-3 pb-3 pt-(--nav-h) md:px-4">
+      {/* The hero itself is a full-bleed photo carousel with no room for a
+          literal headline — this is the page's real h1 for crawlers/screen
+          readers, visually hidden rather than skipped. */}
+      <h1 className="sr-only">
+        SHAFE Design Studio — Interior Design, Architecture &amp; Permit
+        Drawings in Oakville, Ontario
+      </h1>
       <LoadingCurtain ready={imageReady} onOpened={signalHeroLoaded} />
       <div
         data-nav-dark

@@ -3,7 +3,12 @@ import { getProjects } from "../lib/portfolio";
 import { ProjectCard } from "../components/ProjectCard";
 import { Reveal } from "../components/Reveal";
 
-export const metadata: Metadata = { title: "All Work — SHAFE" };
+export const metadata: Metadata = {
+  title: "All Work",
+  description:
+    "Custom homes, additions, legal basement suites, and commercial fit-outs by SHAFE Design Studio across Oakville, Burlington, Milton, Mississauga, Hamilton, and Peterborough.",
+  alternates: { canonical: "/projects" },
+};
 
 export default function AllWorkPage() {
   const projects = getProjects();

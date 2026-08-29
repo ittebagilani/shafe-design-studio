@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { isAuthed, adminConfigured } from "../lib/admin-auth";
@@ -5,6 +6,10 @@ import { logoutAction } from "./actions";
 import { LoginForm } from "./LoginForm";
 
 export const dynamic = "force-dynamic"; // cookie- and Blob-driven; never cache admin
+
+// robots.ts already disallows /admin, but a crawler that ignores that (or an
+// old cached URL) still shouldn't index the bare login page.
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   if (!adminConfigured()) {

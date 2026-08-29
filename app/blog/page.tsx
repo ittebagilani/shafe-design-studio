@@ -4,7 +4,12 @@ import Link from "next/link";
 import { getPosts, readingTime } from "../lib/posts";
 import { Reveal } from "../components/Reveal";
 
-export const metadata: Metadata = { title: "Blog — SHAFE" };
+export const metadata: Metadata = {
+  title: "Blog",
+  description:
+    "Permit timelines, ARU costs, renovation vs. addition, and other real-world questions about building in Ontario, answered by SHAFE Design Studio.",
+  alternates: { canonical: "/blog" },
+};
 export const revalidate = 60;
 
 const dateFmt = new Intl.DateTimeFormat("en-CA", {

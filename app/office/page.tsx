@@ -3,7 +3,12 @@ import path from "node:path";
 import type { Metadata } from "next";
 import { OfficeStory } from "./OfficeStory";
 
-export const metadata: Metadata = { title: "Office — SHAFE" };
+export const metadata: Metadata = {
+  title: "Office",
+  description:
+    "Inside SHAFE Design Studio's Oakville office — a small, founder-led architecture and interior design practice serving the Golden Horseshoe.",
+  alternates: { canonical: "/office" },
+};
 
 const IMG_RE = /\.(jpe?g|png|webp|avif)$/i;
 

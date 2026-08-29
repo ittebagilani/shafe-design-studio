@@ -16,7 +16,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const p = getProject(slug);
-  return { title: p ? `${p.title} — SHAFE` : "SHAFE" };
+  if (!p) return { title: "Not found" };
+  const description = `${p.name} — ${p.meta}. Interior design, architecture, and permit drawings by SHAFE Design Studio.`;
+  return {
+    title: p.title,
+    description,
+    alternates: { canonical: `/projects/${p.slug}` },
+    openGraph: { type: "website", title: p.title, description, images: [{ url: p.cover }] },
+  };
 }
 
 const imgClass =
