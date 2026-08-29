@@ -22,8 +22,8 @@ export function Footer({ showMap = false }: { showMap?: boolean }) {
           <Image
             src="/images/logo/shafe-logo-transparent.png"
             alt="SHAFE Design Studio"
-            width={4000}
-            height={1928}
+            width={640}
+            height={308}
             className="h-32 w-auto brightness-0 invert md:h-44"
           />
 

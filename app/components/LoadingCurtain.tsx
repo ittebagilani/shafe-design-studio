@@ -80,8 +80,8 @@ export function LoadingCurtain({
         <Image
           src="/images/logo/shafe-logo-transparent.png"
           alt="SHAFE Design Studio"
-          width={4000}
-          height={1928}
+          width={960}
+          height={463}
           priority
           className="w-[clamp(220px,32vw,480px)]"
         />

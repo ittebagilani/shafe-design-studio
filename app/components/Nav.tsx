@@ -90,8 +90,8 @@ export function Nav() {
           <Image
             src="/images/logo/shafe-logo.png"
             alt="SHAFE Design Studio"
-            width={4000}
-            height={974}
+            width={320}
+            height={78}
             priority
             className={`h-9 w-auto transition-[filter] duration-500 md:h-10 ${
               dark ? "brightness-0 invert" : ""
