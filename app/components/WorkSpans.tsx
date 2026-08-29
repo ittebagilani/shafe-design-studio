@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "motion/react";
+
 const disciplines = ["Interior Design", "Architecture", "Permits & Drawings"];
 
 const statement =
@@ -11,11 +15,11 @@ export function WorkSpans({ images }: { images: string[] }) {
 
   return (
     <section id="studio">
-      {/* dvh, not vh: mobile browsers size vh for the largest possible viewport
-          (toolbar hidden), but the scroll-driven word-fill below tracks the
-          real, live viewport — the mismatch made the animation-range math run
-          out ahead of the actual scrollable distance, cutting off early words. */}
-      <div className="wordfill-scope relative h-[240dvh]">
+      {/* Word-by-word scroll reveal — desktop only. Mobile's viewport-height
+          instability (address bar show/hide) fights the scroll-driven timeline
+          this needs, so mobile gets a plain fade-in instead, in normal flow
+          rather than a pinned 240dvh scroll runway that effect no longer needs. */}
+      <div className="wordfill-scope relative hidden h-[240dvh] md:block">
         <div className="sticky top-0 flex h-dvh items-center">
           <div className="mx-auto grid w-full max-w-[1600px] items-start gap-10 px-6 md:grid-cols-12 md:px-10">
             <div className="md:col-span-3">
@@ -44,7 +48,25 @@ export function WorkSpans({ images }: { images: string[] }) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1600px] px-6 pb-24 md:px-10 md:pb-32">
+      <div className="mx-auto max-w-[1600px] px-6 pt-20 md:hidden">
+        <p className="text-xs uppercase tracking-[0.3em] text-clay">
+          Salman Ellahi
+        </p>
+        <p className="mt-1 text-xs uppercase tracking-[0.2em] text-umber/60">
+          Founder &amp; Principal Designer
+        </p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="font-grotesk mt-6 text-3xl font-normal leading-[1.15] tracking-[-0.01em] text-ink"
+        >
+          {statement}
+        </motion.p>
+      </div>
+
+      <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-16 md:px-10 md:pb-32 md:pt-0">
       <p className="mb-10 font-grotesk text-xl text-ink">
         Our work spans
       </p>
